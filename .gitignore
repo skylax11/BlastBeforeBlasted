@@ -1,0 +1,44 @@
+# Unity generated folders
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+UserSettings/
+
+# Visual Studio / Rider
+.vs/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Unity meta (önemli!)
+# meta dosyalarını ignore ETME!
+!*.meta
+
+# Crash logs
+sysinfo.txt
+
+# Packages cache
+Packages/packages-lock.json
+
+# IDE
+.idea/
+
+# Android / iOS build
+.gradle/
+*.apk
+*.aab
+*.ipa
