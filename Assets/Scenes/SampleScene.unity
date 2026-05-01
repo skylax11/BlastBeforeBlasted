@@ -129,6 +129,8 @@ GameObject:
   m_Component:
   - component: {fileID: 161724132}
   - component: {fileID: 161724133}
+  - component: {fileID: 161724134}
+  - component: {fileID: 161724135}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -174,6 +176,32 @@ MonoBehaviour:
   _width: 6
   _height: 6
   _gridAnchor: {x: 0, y: 0}
+--- !u!114 &161724134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161724131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fadd78875cab6814b9a41636c499bbd8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gridGenerator: {fileID: 161724133}
+--- !u!114 &161724135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 161724131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72ef8973c46ecdb45b69c62977fbb552, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gameLogicController: {fileID: 161724134}
 --- !u!1 &358096958
 GameObject:
   m_ObjectHideFlags: 0
