@@ -10,6 +10,10 @@ public class Block : MonoBehaviour
 
     private BlockType _type;
 
+    public BlockType Type => _type;
+
+    public int BlockId;
+
     public void Setup(BlockSO properties, BlockType type)
     {
         this._properties = properties;
