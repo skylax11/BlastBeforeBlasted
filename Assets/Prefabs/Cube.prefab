@@ -101,3 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _renderer: {fileID: 6076718062368977246}
+  GroupId: 0
+  A: 1
+  B: 4
+  C: 6

@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System;
 using UnityEngine;
 
@@ -13,7 +12,6 @@ public class GridGenerator : MonoBehaviour
     private BlockSO[] _blockProperties;
 
     [Header("Grid Infos")]
-
     public GridInfo GridInfo;
 
     [SerializeField]
@@ -43,11 +41,22 @@ public class GridGenerator : MonoBehaviour
                 int randomType = UnityEngine.Random.Range(0, enumArray.Length);
 
                 Vector3 spawnPoint = new Vector3(startX + i * blockSize * 2,startY + j * blockSize * 2,0);
-                var instantiatedBlock = Instantiate(_blockPrefab);
-                instantiatedBlock.transform.position = spawnPoint;
+                
+                Block instantiatedBlock;
+                if (BlockPool.Instance != null)
+                {
+                    instantiatedBlock = BlockPool.Instance.GetBlock(spawnPoint, transform);
+                }
+                else
+                {
+                    instantiatedBlock = Instantiate(_blockPrefab, spawnPoint, Quaternion.identity, transform);
+                }
 
                 instantiatedBlock.Setup(_blockProperties[randomType],(BlockType)randomType);
-                instantiatedBlock.name = $"{i}-{j}";
+                instantiatedBlock.GridX = i - 1;
+                instantiatedBlock.GridY = j - 1;
+                instantiatedBlock.SetSortingOrder((_height - instantiatedBlock.GridY) * 10);
+                instantiatedBlock.name = $"{i-1}-{j-1}";
                 Grid[i-1, j-1] = instantiatedBlock;
             }
         }
@@ -63,9 +72,17 @@ public class GridGenerator : MonoBehaviour
             EndY = endY - blockSize,
             BlockSize = blockSize,
         };
+    }
 
+    public BlockSO GetRandomBlockProperty(out BlockType type)
+    {
+        var enumArray = Enum.GetValues(typeof(BlockType));
+        int randomType = UnityEngine.Random.Range(0, enumArray.Length);
+        type = (BlockType)randomType;
+        return _blockProperties[randomType];
     }
 }
+
 public struct GridInfo
 {
     public float StartX;
@@ -74,7 +91,7 @@ public struct GridInfo
     public float EndY;
     public float BlockSize;
 
-    public GridInfo(float sX ,float sY, float eX, float eY,float blockSize)
+    public GridInfo(float sX, float sY, float eX, float eY, float blockSize)
     {
         StartX = sX;
         StartY = sY;
