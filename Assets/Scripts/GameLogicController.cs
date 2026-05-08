@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +26,25 @@ public class GameLogicController : MonoBehaviour
     public GridInfo GridInfo;
 
     private bool _isProcessing = false;
+
+
+    [SerializeField]
+    private int _scoreMultiplier;
+
+    public int Score
+    {
+        get
+        {
+            return _score;
+        }
+        set
+        {
+            _score = value;
+            GameUI.Instance.UpdateUI(_score);
+        }
+    }
+
+    private int _score;
 
     private void Start()
     {
@@ -128,6 +148,8 @@ public class GameLogicController : MonoBehaviour
             return;
         }
 
+        HandleScore(group);
+
         Block[,] grid = _gridGenerator.Grid;
 
         for (int i = 0; i < group.Blocks.Count; i++)
@@ -138,6 +160,10 @@ public class GameLogicController : MonoBehaviour
         }
 
         StartCoroutine(FallAndCalculateRoutine());
+    }
+    private void HandleScore(BlockGroup group)
+    {
+       Score += group.Blocks.Count * _scoreMultiplier;
     }
 
     private IEnumerator FallAndCalculateRoutine()
