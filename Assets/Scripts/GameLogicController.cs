@@ -174,6 +174,23 @@ public class GameLogicController : MonoBehaviour
         yield return StartCoroutine(RefillGridCoroutine());
         
         CalculateGroups();
+
+        // Deadlock kontrolü: eğer blast edilebilir grup yoksa shuffle yap
+        int maxShuffleAttempts = 10;
+        int attempt = 0;
+        while (IsDeadlock() && attempt < maxShuffleAttempts)
+        {
+            Debug.Log($"[Deadlock] Tespit edildi! Shuffle denemesi: {attempt + 1}");
+            ShuffleGrid();
+            CalculateGroups();
+            attempt++;
+        }
+
+        if (IsDeadlock())
+        {
+            Debug.LogWarning("[Deadlock] {maxShuffleAttempts} denemede çözülemedi, grid yeniden oluşturuluyor.");
+            yield return StartCoroutine(HardResetRoutine());
+        }
         
         _isProcessing = false;
     }
@@ -323,5 +340,74 @@ public class GameLogicController : MonoBehaviour
                     m.block.transform.position = m.targetPos;
             }
         }
+    }
+
+    /// <summary>
+    /// Blast edilebilir (>=2 blok) grup yoksa true döner.
+    /// </summary>
+    private bool IsDeadlock()
+    {
+        foreach (var group in _groups.Values)
+        {
+            if (group.Blocks.Count >= 2)
+                return false;
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Gri'deki tüm blokların tiplerini rastgele karıştırır.
+    /// Pozisyonlar/görsel sabit kalır, sadece renkler değişir.
+    /// </summary>
+    private void ShuffleGrid()
+    {
+        Block[,] grid = _gridGenerator.Grid;
+        int width  = grid.GetLength(0);
+        int height = grid.GetLength(1);
+
+        List<Block> allBlocks = new List<Block>();
+        for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+                if (grid[x, y] != null)
+                    allBlocks.Add(grid[x, y]);
+
+        List<BlockType> types = new List<BlockType>();
+        foreach (var b in allBlocks)
+            types.Add(b.Type);
+
+        for (int i = types.Count - 1; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (types[i], types[j]) = (types[j], types[i]);
+        }
+
+        for (int i = 0; i < allBlocks.Count; i++)
+        {
+            BlockType newType = types[i];
+            BlockSO props = _gridGenerator.GetBlockPropertyByType(newType);
+            allBlocks[i].Setup(props, newType);
+        }
+    }
+
+    /// <summary>
+    /// Shuffle ile çözülemezse tüm grid'i sıfırdan üretir.
+    /// </summary>
+    private IEnumerator HardResetRoutine()
+    {
+        Block[,] grid = _gridGenerator.Grid;
+        int width  = grid.GetLength(0);
+        int height = grid.GetLength(1);
+
+        // Tüm blokları pool'a geri ver
+        for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+                if (grid[x, y] != null)
+                {
+                    BlockPool.Instance.ReturnBlock(grid[x, y]);
+                    grid[x, y] = null;
+                }
+
+        yield return StartCoroutine(RefillGridCoroutine());
+        CalculateGroups();
     }
 }

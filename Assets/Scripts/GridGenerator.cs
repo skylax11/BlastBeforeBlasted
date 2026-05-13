@@ -81,6 +81,15 @@ public class GridGenerator : MonoBehaviour
         type = (BlockType)randomType;
         return _blockProperties[randomType];
     }
+
+    /// <summary>
+    /// Verilen BlockType'a karşılık gelen BlockSO'yu döner.
+    /// _blockProperties dizisi BlockType enum sıralamasıyla eşleşmelidir.
+    /// </summary>
+    public BlockSO GetBlockPropertyByType(BlockType type)
+    {
+        return _blockProperties[(int)type];
+    }
 }
 
 public struct GridInfo
